@@ -13,6 +13,7 @@
     pavucontrol
 
     # System
+    gh
     pix
     swappy
     git

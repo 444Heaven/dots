@@ -52,12 +52,12 @@
     '';
 
     shellAliases = {
-      Rebuild = "sudo nixos-rebuild switch --flake ~/.nix#NixDesktop";
-      Config = "nvim ~/.nix/system/config.nix";
-      Home = "nvim ~/.nix/system/home.nix";
-      Packages = "nvim ~/.nix/modules/home/packages.nix";
-      Flake = "nvim ~/.nix/flake.nix";
-      Update = "cd ~/.nix && sudo nix flake update";
+      Rebuild = "sudo nixos-rebuild switch --flake ~/dots#NixDesktop";
+      Config = "nvim ~/dots/system/config.nix";
+      Home = "nvim ~/dots/system/home.nix";
+      Packages = "nvim ~/dots/modules/home/packages.nix";
+      Flake = "nvim ~/dots/flake.nix";
+      Update = "cd ~/dots && sudo nix flake update";
       Clean = "sudo nix-collect-garbage -d";
       ls = "lsd";
     };
