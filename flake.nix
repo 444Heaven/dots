@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    evie.url = "path:/home/heaven/Evie/Evie";
+    evie.url = "github:EvieOrg/Evie";
 
     evie-greeter.url = "github:EvieOrg/EvieGreeter";
 
