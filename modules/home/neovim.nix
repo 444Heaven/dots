@@ -16,11 +16,13 @@
       nixfmt
       gcc
       ripgrep
+      lldb
     ];
 
     plugins = with pkgs.vimPlugins; [
       alpha-nvim
       nvim-web-devicons
+      nvim-lspconfig
       nvim-cmp
       cmp-nvim-lsp
       cmp-buffer
@@ -28,7 +30,15 @@
       luasnip
       cmp_luasnip
       (nvim-treesitter.withPlugins (
-        p: with p; [ rust nix bash yaml toml json lua ]
+        p: with p; [
+          rust
+          nix
+          bash
+          yaml
+          toml
+          json
+          lua
+        ]
       ))
       nvim-treesitter-context
       telescope-nvim
@@ -39,102 +49,86 @@
       lualine-nvim
       crates-nvim
       cord-nvim
+      which-key-nvim # Il popup per le shortcut
+      trouble-nvim
+      nvim-surround
+      nvim-notify # Le notifiche belle
+      nvim-dap
+      nvim-dap-ui
     ];
 
     initLua = ''
       -- Leader
       vim.g.mapleader = " "
 
-      -- Indentation
+      -- --- OPZIONI CORE ---
       vim.opt.tabstop = 2
       vim.opt.shiftwidth = 2
+      vim.opt.softtabstop = 2
       vim.opt.expandtab = true
       vim.opt.smartindent = true
-      vim.opt.autoindent = true
-      vim.opt.preserveindent = true
-
-      -- Wrapping
+      vim.opt.number = true
+      vim.opt.termguicolors = true
       vim.opt.wrap = true
       vim.opt.linebreak = true
-      vim.opt.breakindent = true
 
-      -- Line numbers
-      vim.opt.number = true
-      vim.opt.relativenumber = false
-
-      -- Transparent background
-      vim.api.nvim_set_hl(0, "Normal",          { bg = "none" })
-      vim.api.nvim_set_hl(0, "NormalFloat",     { bg = "none" })
-      vim.api.nvim_set_hl(0, "NormalNC",        { bg = "none" })
-      vim.api.nvim_set_hl(0, "SignColumn",      { bg = "none" })
-      vim.api.nvim_set_hl(0, "EndOfBuffer",     { bg = "none" })
-      vim.api.nvim_set_hl(0, "NeoTreeNormal",   { bg = "none" })
-      vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "none" })
-
-      -- Suppress noise
-      local orig_notify = vim.notify
-      vim.notify = function(msg, ...)
-        if msg:match("no matching language servers") then return end
-        orig_notify(msg, ...)
-      end
-
-      -- Format on save
-      vim.api.nvim_create_autocmd("BufWritePre", {
-        pattern = { "*.nix", "*.rs" },
-        callback = function()
-          local clients = vim.lsp.get_clients({ bufnr = 0 })
-          if #clients > 0 then
-            vim.lsp.buf.format({ async = false })
-          end
-        end,
+      -- --- NOTIFICHE BELLE (nvim-notify) ---
+      local notify = require("notify")
+      vim.notify = notify
+      notify.setup({
+        background_colour = "#000000",
+        stages = "fade",
+        timeout = 3000,
       })
 
-      -- Keybinds
+      -- Trasparenza
+      local hl_groups = { "Normal", "NormalFloat", "NormalNC", "SignColumn", "EndOfBuffer", "NeoTreeNormal", "NeoTreeNormalNC" }
+      for _, group in ipairs(hl_groups) do
+        vim.api.nvim_set_hl(0, group, { bg = "none" })
+      end
+
+      -- Helper Keymaps
       local map = function(mode, lhs, rhs, desc)
         vim.keymap.set(mode, lhs, rhs, { silent = true, desc = desc })
       end
 
-      -- Ctrl+A select all
-      map("n", "<C-a>", "ggVG",                                        "Select all")
+      -- --- KEYBINDS EVIEVIM ---
+      map("n", "<C-a>", "ggVG", "Select all")
+      map("v", "<C-c>", '"+y', "Copy")
+      map("v", "<C-x>", '"+x', "Cut")
+      map("n", "<C-v>", '"+p', "Paste")
+      map("i", "<C-v>", '<C-r>+', "Paste")
+      map("n", "<C-z>", "u", "Undo")
+      map("n", "<C-y>", "<C-r>", "Redo")
+      map("n", "<C-t>", ":Neotree toggle<CR>", "Toggle tree")
+      map("n", "<C-q>", ":Alpha<CR>", "Dashboard")
+      map("n", "<leader>f", function() vim.lsp.buf.format() end, "Format file")
+      map("n", "<Down>", "gj", "Move down")
+      map("n", "<Up>", "gk", "Move up")
 
-      -- Ctrl+C copy to system clipboard
-      map("v", "<C-c>", '"+y',                                         "Copy to clipboard")
+      -- --- WHICH-KEY (Il Popup Carino) ---
+      local wk = require("which-key")
+      wk.setup({ delay = 0 })
 
-      -- Ctrl+X cut to system clipboard
-      map("v", "<C-x>", '"+x',                                         "Cut to clipboard")
+      -- Ctrl+K ora apre il popup di Which-Key per farti vedere tutto!
+      map("n", "<C-k>", "<cmd>WhichKey<cr>", "Show Keybinds Popup")
 
-      -- Ctrl+V paste from system clipboard
-      map("n", "<C-v>", '"+p',                                         "Paste from clipboard")
-      map("i", "<C-v>", '<C-r>+',                                      "Paste from clipboard")
+      -- LSP Keybinds
+      map("n", "gd", vim.lsp.buf.definition, "Go to Definition")
+      map("n", "gr", vim.lsp.buf.references, "Go to References")
+      map("n", "K", vim.lsp.buf.hover, "Hover Doc")
+      map("n", "[d", vim.diagnostic.goto_prev, "Prev Diagnostic")
+      map("n", "]d", vim.diagnostic.goto_next, "Next Diagnostic")
 
-      -- Ctrl+Z undo
-      map("n", "<C-z>", "u",                                           "Undo")
-      map("i", "<C-z>", "<C-o>u",                                      "Undo")
+      -- --- UNIVERSAL FORMAT ON SAVE ---
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        pattern = { "*.nix", "*.rs" },
+        callback = function() vim.lsp.buf.format({ async = false }) end,
+      })
 
-      -- Ctrl+Y redo
-      map("n", "<C-y>", "<C-r>",                                       "Redo")
-      map("i", "<C-y>", "<C-o><C-r>",                                  "Redo")
-
-      -- Ctrl+T open file tree
-      map("n", "<C-t>", ":Neotree toggle<CR>",                         "Toggle file tree")
-
-      -- Ctrl+Q go back to dashboard
-      map("n", "<C-q>", ":Alpha<CR>",                                  "Go to dashboard")
-
-      -- Ctrl+K show keybinds
-      map("n", "<C-k>", function()
-        print("C-a: select all | C-c: copy | C-x: cut | C-v: paste | C-z: undo | C-y: redo | C-t: tree | C-q: dashboard | <space>f: format")
-      end,                                                              "Show keybinds")
-
-      -- Format
-      map("n", "<leader>f", "<cmd>lua vim.lsp.buf.format()<CR>",       "Format file")
-      map("n", "<Down>",    "gj",                                       "Move down visual line")
-      map("n", "<Up>",      "gk",                                       "Move up visual line")
-
-      -- Alpha (dashboard)
+      -- --- DASHBOARD (ALPHA) ---
       local alpha = require('alpha')
       local dashboard = require('alpha.themes.dashboard')
-
       dashboard.section.header.val = {
         "                                                   ",
         " \u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2557}\u{2588}\u{2588}\u{2557}   \u{2588}\u{2588}\u{2557}\u{2588}\u{2588}\u{2557}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2557}\u{2588}\u{2588}\u{2557}   \u{2588}\u{2588}\u{2557}\u{2588}\u{2588}\u{2557}\u{2588}\u{2588}\u{2588}\u{2557}   \u{2588}\u{2588}\u{2588}\u{2557}",
@@ -145,7 +139,6 @@
         " \u{255A}\u{2550}\u{2550}\u{2550}\u{2550}\u{2550}\u{2550}\u{255D}  \u{255A}\u{2550}\u{2550}\u{2550}\u{255D}  \u{255A}\u{2550}\u{255D}\u{255A}\u{2550}\u{2550}\u{2550}\u{2550}\u{2550}\u{2550}\u{255D}  \u{255A}\u{2550}\u{2550}\u{2550}\u{255D}  \u{255A}\u{2550}\u{255D}\u{255A}\u{2550}\u{255D}     \u{255A}\u{2550}\u{255D}",
         "                                                   ",
       }
-
       dashboard.section.buttons.val = {
         dashboard.button("e", "\u{f15b}  New file",     ":enew<CR>"),
         dashboard.button("f", "\u{f002}  Find file",    ":Telescope find_files<CR>"),
@@ -153,94 +146,43 @@
         dashboard.button("g", "\u{f422}  Find word",    ":Telescope live_grep<CR>"),
         dashboard.button("q", "\u{f011}  Quit",         ":qa<CR>"),
       }
-
       alpha.setup(dashboard.config)
 
-      -- Cursore sulla prima voce
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "AlphaReady",
-        callback = function()
-          vim.cmd("normal! gg")
-        end,
+      -- --- LSP SETUP (Nuovo Standard) ---
+      local caps = require('cmp_nvim_lsp').default_capabilities()
+      vim.lsp.config('nixd', {
+        capabilities = caps,
+        settings = { nixd = { formatting = { command = { "nixfmt" } } } }
+      })
+      vim.lsp.config('rust_analyzer', { capabilities = caps })
+      vim.lsp.config('bashls', { capabilities = caps })
+      vim.lsp.config('yamlls', { capabilities = caps })
+      vim.lsp.enable({ 'nixd', 'rust_analyzer', 'bashls', 'yamlls' })
+
+      -- --- COMPLETION ---
+      local cmp = require('cmp')
+      cmp.setup({
+        snippet = { expand = function(args) require('luasnip').lsp_expand(args.body) end },
+        mapping = cmp.mapping.preset.insert({
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then cmp.select_next_item() else fallback() end
+          end, { "i", "s" }),
+        }),
+        sources = cmp.config.sources({{ name = 'nvim_lsp' }, { name = 'luasnip' }}, {{ name = 'buffer' }})
       })
 
-      -- Lualine
+      -- --- ALTRI PLUGIN ---
       require('lualine').setup()
-
-      -- Neo-tree
-      require('neo-tree').setup({
-        close_if_last_window = true,
-        filesystem = {
-          follow_current_file = { enabled = true },
-        },
-      })
-
-      -- Crates
-      require('crates').setup()
-
-      -- Telescope
+      require('neo-tree').setup({ filesystem = { follow_current_file = { enabled = true } } })
       require('telescope').setup()
+      require('cord').setup({})
 
       -- Treesitter
       vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "rust", "nix", "bash", "yaml", "toml", "json", "lua" },
-        callback = function()
-          vim.treesitter.start()
-        end,
-      })
-      require('treesitter-context').setup({ enable = false })
-
-      -- nvim-cmp
-      local cmp = require('cmp')
-      local luasnip = require('luasnip')
-      cmp.setup({
-        snippet = {
-          expand = function(args) luasnip.lsp_expand(args.body) end,
-        },
-        mapping = cmp.mapping.preset.insert({
-          ['<C-Space>'] = cmp.mapping.complete(),
-          ['<CR>']      = cmp.mapping.confirm({ select = true }),
-          ['<Tab>']     = cmp.mapping(function(fallback)
-            if cmp.visible() then cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then luasnip.expand_or_jump()
-            else fallback() end
-          end, { "i", "s" }),
-        }),
-        sources = cmp.config.sources({
-          { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-          { name = 'crates' },
-        }, {
-          { name = 'buffer' },
-          { name = 'path' },
-        }),
-      })
-
-      -- LSP
-      local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-      vim.lsp.config('rust_analyzer', { capabilities = capabilities })
-      vim.lsp.config('nixd', { capabilities = capabilities })
-      vim.lsp.config('bashls', { capabilities = capabilities })
-      vim.lsp.config('yamlls', { capabilities = capabilities })
-
-      vim.lsp.enable({ 'rust_analyzer', 'nixd', 'bashls', 'yamlls' })
-
-      -- Discord RPC
-      require('cord').setup({
-        editor = {
-          client = 'neovim',
-          tooltip = 'I use Neovim btw',
-        },
-        display = {
-          show_time = true,
-          show_repository = true,
-          show_cursor_position = true,
-        },
-        idle = {
-          enable = true,
-          timeout = 1800000,
-        },
+        pattern = { "rust", "nix", "bash", "lua" },
+        callback = function() vim.treesitter.start() end,
       })
     '';
   };

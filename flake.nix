@@ -15,7 +15,7 @@
 
     eviefetch.url = "github:EvieOrg/EvieFetch";
 
-    zen-browser.url = "github:loyaall/zen-browser-nixos-flake";
+    zen-browser.url = "github:444heaven/zen-browser-nixos-flake";
 
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
   };

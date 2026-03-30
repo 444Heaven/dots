@@ -37,11 +37,6 @@
     antigravity
     kiro
 
-    # Coding Libraries
-    nil
-    nixd
-    rust-analyzer
-
     # Themes
     adw-gtk3
 

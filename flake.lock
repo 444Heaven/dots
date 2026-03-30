@@ -38,11 +38,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1774798528,
-        "narHash": "sha256-Znnc5Ka2YFFZFJBv3MG8h5iediUR6GiZS+OejU7d04I=",
+        "lastModified": 1774804930,
+        "narHash": "sha256-Mq9pZTNPrBtigJy4TzdzOIC53+gaWx/rPweSbajwg7g=",
         "owner": "EvieOrg",
         "repo": "Evie",
-        "rev": "f3546b067d86a0fe6ade6e6611a4d9be6d116af9",
+        "rev": "91ad3056e3ffb8b7e35d66fdfe115ce49b8efe8e",
         "type": "github"
       },
       "original": {
@@ -152,11 +152,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774738535,
-        "narHash": "sha256-2jfBEZUC67IlnxO5KItFCAd7Oc+1TvyV/jQlR+2ykGQ=",
+        "lastModified": 1774898676,
+        "narHash": "sha256-0Utnqo+FbB+0CVUi0MI3oonF0Kuzy9VcgRkxl53Euvk=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "769e07ef8f4cf7b1ec3b96ef015abec9bc6b1e2a",
+        "rev": "a184bd2f8426087bae93f203403cd4b86c99e57d",
         "type": "github"
       },
       "original": {
@@ -231,11 +231,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1774386573,
-        "narHash": "sha256-4hAV26quOxdC6iyG7kYaZcM3VOskcPUrdCQd/nx8obc=",
+        "lastModified": 1774709303,
+        "narHash": "sha256-D3Q07BbIA2KnTcSXIqqu9P586uWxN74zNoCH3h2ESHg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "46db2e09e1d3f113a13c0d7b81e2f221c63b8ce9",
+        "rev": "8110df5ad7abf5d4c0f6fb0f8f978390e77f9685",
         "type": "github"
       },
       "original": {
@@ -364,15 +364,15 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1774716893,
-        "narHash": "sha256-s9ch/gFPojpLSJ5TWtEFHy71ET3giUkwwJECNte/g4M=",
-        "owner": "loyaall",
+        "lastModified": 1774906974,
+        "narHash": "sha256-J3RTbQT923yLxpAGfSCLiK29A2vWLRO92cluGtcj3ow=",
+        "owner": "444heaven",
         "repo": "zen-browser-nixos-flake",
-        "rev": "5085ac870c87f64069d3a5bec64206a7f266784b",
+        "rev": "62414553968ac66d39f7a795224627f7658b6c38",
         "type": "github"
       },
       "original": {
-        "owner": "loyaall",
+        "owner": "444heaven",
         "repo": "zen-browser-nixos-flake",
         "type": "github"
       }
