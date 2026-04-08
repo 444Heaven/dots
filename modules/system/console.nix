@@ -6,5 +6,5 @@
 }:
 
 {
-  console.keyMap = "us-acentos";
+  console.keyMap = "it";
 }

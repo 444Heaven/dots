@@ -24,7 +24,6 @@
     ../modules/system/bluetooth.nix
     ../modules/system/fonts.nix
     ../modules/system/polkit.nix
-    ../modules/system/greeter.nix
     ../modules/system/steam.nix
     ../modules/system/fastclicks.nix
     ../modules/system/brightness.nix
@@ -108,7 +107,10 @@
   fileSystems."/run/media/heaven/Volume" = {
     device = "/dev/disk/by-uuid/538233b2-9220-4f03-ae37-d77fc5a2e228";
     fsType = "btrfs";
-    options = [ "defaults" "nofail" ];
+    options = [
+      "defaults"
+      "nofail"
+    ];
   };
 
   # Zsh (configured in ../modules/home/zsh.nix)

@@ -14,8 +14,6 @@
 
     # System
     gh
-    pix
-    swappy
     git
     lsd
     tldr
@@ -56,6 +54,7 @@
 
     # Screenshot
     hyprshot
+    gradia
 
   ];
 

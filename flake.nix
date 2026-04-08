@@ -11,8 +11,6 @@
 
     evie.url = "github:EvieOrg/Evie";
 
-    evie-greeter.url = "github:EvieOrg/EvieGreeter";
-
     eviefetch.url = "github:EvieOrg/EvieFetch";
 
     zen-browser.url = "github:444heaven/zen-browser-nixos-flake";

@@ -156,8 +156,8 @@
         "$mod, Space, exec, $menu"
         "$mod, O, exec, $menuAlt"
         "$mod, J, layoutmsg, togglesplit"
-        "$mod SHIFT, S, exec, hyprshot -m region --freeze -o /tmp -f screenshot.png && swappy -f /tmp/screenshot.png"
-        ", PRINT, exec, hyprshot -m output --freeze -o /tmp -f screenshot.png && swappy -f /tmp/screenshot.png"
+        "$mod SHIFT, S, exec, FILE=\"$HOME/Pictures/Screenshots/Screenshot took $(date '+%Y-%m-%d %H-%M-%S').png\" && hyprshot -m region --freeze -o \"$HOME/Pictures/Screenshots\" -f \"$(basename \"$FILE\")\" && gradia \"$FILE\""
+        ", PRINT, exec, FILE=\"$HOME/Pictures/Screenshots/Screenshot took $(date '+%Y-%m-%d %H-%M-%S').png\" && hyprshot -m output --freeze -o \"$HOME/Pictures/Screenshots\" -f \"$(basename \"$FILE\")\" && gradia \"$FILE\""
 
         "$mod, P, exec, evie power"
         "$mod, D, exec, evie settings"
