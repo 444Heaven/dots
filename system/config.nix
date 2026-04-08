@@ -8,7 +8,6 @@
 {
   imports = [
     inputs.home-manager.nixosModules.default
-    inputs.evie-greeter.nixosModules.evie-greeter
     inputs.nix-flatpak.nixosModules.nix-flatpak
     ./drives.nix
     ../modules/system/boot.nix
