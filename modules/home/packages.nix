@@ -33,6 +33,11 @@
     vulkan-tools
 
     # Coding
+    zed-editor
+    nixd
+    rustc
+    cargo
+    rust-analyzer
     antigravity
     kiro
 
